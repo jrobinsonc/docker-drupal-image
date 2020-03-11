@@ -1,0 +1,16 @@
+language: bash
+services: docker
+
+env:
+  - VERSION=7.3 VARIANT=apache
+  - VERSION=7.2 VARIANT=apache
+
+before_script:
+  - env | sort
+  - image="${DOCKER_USERNAME}/drupal:${VERSION}-${VARIANT}"
+
+script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t "$image" -f ./src/$VERSION/$VARIANT/Dockerfile .
+  - docker images
+  - docker push $image
